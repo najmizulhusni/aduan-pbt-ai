@@ -25,7 +25,6 @@ import {
   ClipboardEdit
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
-import { GoogleGenAI } from "@google/genai";
 import { jsPDF } from "jspdf";
 
 interface ContactInfo {
@@ -138,73 +137,32 @@ export default function App() {
     setResult(null);
 
     try {
-      const apiKey = process.env.GEMINI_API_KEY;
-      if (!apiKey) throw new Error("API Key tidak dijumpai.");
-
-      const ai = new GoogleGenAI({ apiKey });
-      
-      const matches = image.match(/^data:([a-zA-Z0-9]+\/[a-zA-Z0-9-.+]+);base64,(.+)$/);
-      if (!matches) throw new Error("Format imej tidak sah.");
-
-      const mimeType = matches[1];
-      const imageData = matches[2];
-
-      const locationContext = locationName ? `Location: ${locationName}. ` : "";
-      const userContext = userName ? `Pengirim: ${userName}. ` : "";
-
-      const response = await ai.models.generateContent({
-        model: "gemini-3-flash-preview",
-        contents: {
-          parts: [
-            { inlineData: { mimeType, data: imageData } },
-            { text: `Sistem Identiti: Audit & Analisis Infrastruktur Awam Malaysia Pintar.
-                     Konteks: Laporan untuk ${councilName}. ${locationContext} ${userContext} Tarikh: ${todayDate}.
-                     
-                     Tugasan Utama (Dwi-Mod: Aduan atau Penghargaan):
-                     1. Analisis Kualiti Visual: Teliti imej dengan mendalam. 
-                        - Jika ada kerosakan (jalan berlubang, lampu rosak, sampah), beri skor 1-10.
-                        - Jika persekitaran BERSIH, TERATUR, dan CANTIK, beri skor 0.
-                     
-                     2. Carian Hubungan Tepat: Gunakan Google Search untuk mencari:
-                        - Emel Rasmi Aduan ${councilName} (pastikan domain .gov.my yang betul).
-                        - No. WhatsApp Aduan / Talian Hotline khusus untuk aduan awam.
-                        - Laman web rasmi jabatan aduan.
-                     
-                     3. Penjanaan Dokumen Profesional:
-                        - JIKA SKOR > 0: Jana 'Surat Kiriman Rasmi' (Aduan) yang tegas.
-                        - JIKA SKOR == 0: Jana 'Surat Penghargaan/Pujian' (Commendation) kepada PBT kerana mengekalkan kebersihan atau kualiti infrastruktur. Puji hasil kerja Majlis dalam menjaga kawasan tersebut.
-                        - Gunakan nama "${userName || '[NAMA ANDA]'}" dalam tandatangan. JANGAN guna "Audit Manager".
-                     
-                     4. Nota Teknikal & Impak:
-                        - JIKA SKOR > 0: Fokus pada risiko keselamatan.
-                        - JIKA SKOR == 0: Fokus pada kualiti bahan atau estetika yang dikekalkan dengan baik.
-                     
-                     Return ONLY a valid JSON:
-                     {
-                       "formalLetter": "string (Surat Rasmi lengkap)",
-                       "emailTemplate": "string (Ringkasan emel)",
-                       "contactInfo": { "email": "string", "whatsapp": "string", "website": "string", "phone": "string" },
-                       "problemTitle": "Tajuk Profesional (Aduan atau Penghargaan)",
-                       "department": "Jabatan Bertanggungjawab",
-                       "severityScore": number (0-10),
-                       "impactAnalysis": "Analisis kualiti atau risiko",
-                       "technicalNotes": ["nota 1", "nota 2", "nota 3"]
-                     }` }
-          ]
+      const response = await fetch("/api/generate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
         },
-        config: {
-          responseMimeType: "application/json",
-          tools: [{ googleSearch: {} }]
-        }
+        body: JSON.stringify({
+          image,
+          councilName,
+          locationName,
+          userName,
+          todayDate
+        })
       });
 
-      const data = JSON.parse(response.text || "{}") as AIResponse;
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Gagal menjana analisis.");
+      }
+
+      const data = await response.json() as AIResponse;
       setResult(data);
       setRecipientEmail(data.contactInfo?.email || "");
       setRecipientPhone(data.contactInfo?.whatsapp || data.contactInfo?.phone || "");
     } catch (err: any) {
       console.error(err);
-      setError("Gagal menjana analisis. Sila pastikan gambar dan nama PBT adalah tepat.");
+      setError(err.message || "Gagal menjana analisis. Sila pastikan gambar dan nama PBT adalah tepat.");
     } finally {
       setIsGenerating(false);
     }
