@@ -20,7 +20,7 @@ app.get("/api/health", (req, res) => {
 // AI Proxy Route
 app.post("/api/generate", async (req, res) => {
   try {
-    const { image, councilName, locationName, userName, todayDate } = req.body;
+    const { image, councilName, locationName, userName, todayDate, language } = req.body;
     const apiKey = process.env.GEMINI_API_KEY;
 
     if (!apiKey) {
@@ -38,6 +38,7 @@ app.post("/api/generate", async (req, res) => {
     const mimeType = matches[1];
     const imageData = matches[2];
 
+    const langLabel = language === 'en' ? 'English' : 'Malay/Bahasa Melayu';
     const locationContext = locationName ? `Lokasi: ${locationName}. ` : "";
     const userContext = userName ? `Pengirim: ${userName}. ` : "";
 
@@ -48,6 +49,7 @@ app.post("/api/generate", async (req, res) => {
           { inlineData: { mimeType, data: imageData } },
           { text: `Sistem Identiti: Audit & Analisis Infrastruktur Awam Malaysia Pintar (AduanPBT.ai).
                    Konteks: Laporan untuk ${councilName}. ${locationContext} ${userContext} Tarikh: ${todayDate}.
+                   BAHASA OUTPUT: Sila jana kandungan 'formalLetter' dan 'emailTemplate' dalam bahasa: ${langLabel}.
                    
                    Tugasan Utama:
                    1. Analisis Kualiti Visual:
@@ -58,7 +60,7 @@ app.post("/api/generate", async (req, res) => {
                       - Cari emel rasmi aduan (biasanya aduan@... atau ssm@...).
                       - Cari no. khusus WhatsApp Aduan atau Hotline SISPAA yang betul.
                    
-                   3. Penjana Dokumen:
+                   3. Penjana Dokumen (Gunakan Bahasa: ${langLabel}):
                       - JIKA SKOR > 0: Jana 'Surat Aduan Rasmi' yang tegas, profesional, dan menuntut tindakan segera.
                       - JIKA SKOR == 0: Jana 'Surat Penghargaan' yang memuji kebersihan/kualiti kawasan tersebut. Berterima kasih kepada Majlis atas dedikasi mereka.
                       - Gunakan nama "${userName || 'Warga Prihatin'}" dalam tandatangan.

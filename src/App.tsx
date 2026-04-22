@@ -57,20 +57,134 @@ export default function App() {
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [showTatacara, setShowTatacara] = useState(false);
+  const [lang, setLang] = useState<'ms' | 'en'>('ms');
   
   const [recipientEmail, setRecipientEmail] = useState("");
   const [recipientPhone, setRecipientPhone] = useState("");
   
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const todayDate = new Date().toLocaleDateString('ms-MY', { day: 'numeric', month: 'long', year: 'numeric' });
+  const todayDate = new Date().toLocaleDateString(lang === 'ms' ? 'ms-MY' : 'en-MY', { day: 'numeric', month: 'long', year: 'numeric' });
 
-  const loadingSteps = [
-    "Menganalisis imej visual...",
-    "Mengecam kerosakan infrastruktur...",
-    "Menilai tahap keselamatan awam...",
-    "Mencari info perhubungan PBT...",
-    "Menjana draf surat rasmi..."
-  ];
+  const translations = {
+    ms: {
+      guide: "Panduan",
+      beta: "BETA 2030",
+      headline: "Suara Rakyat, Tindakan PBT",
+      subheadline: "Transformasikan aduan anda kepada laporan teknikal profesional. AI membantu anda menapis data dan menghubungi pihak berkuasa dalam sesaat.",
+      councilLabel: "Nama PBT Kawasan",
+      councilPlaceholder: "Cth: MBIP, MBSA, DBKL",
+      locationLabel: "Lokasi Terperinci",
+      locationPlaceholder: "Cth: Taman Universiti, Skudai",
+      nameLabel: "Nama Pengadu (Tandatangan)",
+      namePlaceholder: "Masukkan nama penuh anda",
+      uploadLabel: "Bukti Gambar Kerosakan",
+      uploadButton: "Muat naik di sini",
+      uploadSize: "Saiz Maksimum 10MB",
+      replaceImage: "Ganti Gambar",
+      generateBtn: "Jana Analisis Pintar",
+      generatingBtn: "Menjalankan Analisis AI...",
+      techInfoTitle: "Teknologi Google Gemini",
+      techInfoDesc: "Sistem menggunakan Vision AI untuk mengaudit kerosakan fizikal dan menjana laporan teknikal mengikut piawaian PBT.",
+      hubTitle: "Hub Keputusan Strategik",
+      severityLabel: "Skor Kerosakan",
+      qualityLabel: "Penarafan Kualiti",
+      impactLabel: "Analisis Impak & Risiko",
+      statusLabel: "Status Persekitaran",
+      auditTitle: "Audit Teknikal Visual",
+      emailLabel: "Emel PBT",
+      whatsappLabel: "WhatsApp",
+      officialDoc: "Dokumen Rasmi",
+      copyBtn: "Salin Laporan",
+      copiedBtn: "Salin!",
+      pdfBtn: "PDF",
+      actionBarReady: "Sedia Untuk Menghantar",
+      sendEmailBtn: "Hantar via Emel",
+      sendWsBtn: "WhatsApp",
+      howToTitle: "Tatacara Penggunaan",
+      howToSub: "Portal Kerjasama Komuniti",
+      step1T: "Muat Naik Visual",
+      step1D: "Ambil gambar kerosakan secara jelas sebagai bahan bukti utama.",
+      step2T: "Analisis Kecerdasan",
+      step2D: "Sistem AI akan mengaudit kerosakan dan mengenalpasti jabatan PBT yang tepat.",
+      step3T: "Semakan & Edit",
+      step3D: "Semak draf surat rasmi yang dijana dan lakukan pindaan jika perlu.",
+      step4T: "Tindakan Pantas",
+      step4D: "Hantar laporan melalui emel atau WhatsApp secara terus kepada agensi.",
+      understandBtn: "FAHAM & MULAKAN",
+      errorImage: "Sila muat naik gambar kerosakan.",
+      errorCouncil: "Sila nyatakan nama PBT (cth: MBIP, MBSA).",
+      errorGen: "Gagal menjana analisis.",
+      errorGeneric: "Gagal menjana analisis. Sila pastikan gambar dan nama PBT adalah tepat.",
+      loadingSteps: [
+        "Menganalisis imej visual...",
+        "Mengecam kerosakan infrastruktur...",
+        "Menilai tahap keselamatan awam...",
+        "Mencari info perhubungan PBT...",
+        "Menjana draf surat rasmi..."
+      ]
+    },
+    en: {
+      guide: "Guide",
+      beta: "BETA 2030",
+      headline: "Public Voice, Council Action",
+      subheadline: "Transform your complaints into professional technical reports. AI helps you filter data and contact authorities in seconds.",
+      councilLabel: "Local Council Name",
+      councilPlaceholder: "E.g.: MBIP, MBSA, DBKL",
+      locationLabel: "Detailed Location",
+      locationPlaceholder: "E.g.: Taman Universiti, Skudai",
+      nameLabel: "Reporter Name (Signature)",
+      namePlaceholder: "Enter your full name",
+      uploadLabel: "Damage Image Evidence",
+      uploadButton: "Upload here",
+      uploadSize: "Maximum Size 10MB",
+      replaceImage: "Replace Image",
+      generateBtn: "Generate Smart Analysis",
+      generatingBtn: "Running AI Analysis...",
+      techInfoTitle: "Google Gemini Technology",
+      techInfoDesc: "The system uses Vision AI to audit physical damage and generate technical reports according to council standards.",
+      hubTitle: "Strategic Decision Hub",
+      severityLabel: "Damage Score",
+      qualityLabel: "Quality Rating",
+      impactLabel: "Impact & Risk Analysis",
+      statusLabel: "Environment Status",
+      auditTitle: "Visual Technical Audit",
+      emailLabel: "Council Email",
+      whatsappLabel: "WhatsApp",
+      officialDoc: "Official Document",
+      copyBtn: "Copy Report",
+      copiedBtn: "Copied!",
+      pdfBtn: "PDF",
+      actionBarReady: "Ready to Send",
+      sendEmailBtn: "Send via Email",
+      sendWsBtn: "WhatsApp",
+      howToTitle: "How to Use",
+      howToSub: "Community Collaboration Portal",
+      step1T: "Upload Visual",
+      step1D: "Take a clear picture of the damage as primary evidence.",
+      step2T: "Intelligence Analysis",
+      step2D: "The AI system will audit the damage and identify the precise council department.",
+      step3T: "Review & Edit",
+      step3D: "Review the generated formal letter draft and make amendments if necessary.",
+      step4T: "Rapid Action",
+      step4D: "Send the report via email or WhatsApp directly to the agency.",
+      understandBtn: "UNDERSTAND & START",
+      errorImage: "Please upload a damage image.",
+      errorCouncil: "Please specify council name (e.g., MBIP, MBSA).",
+      errorGen: "Failed to generate analysis.",
+      errorGeneric: "Failed to generate analysis. Please ensure the image and council name are accurate.",
+      loadingSteps: [
+        "Analyzing visual images...",
+        "Recognizing infrastructure damage...",
+        "Assessing public safety level...",
+        "Finding council contact info...",
+        "Generating formal letter draft..."
+      ]
+    }
+  };
+
+  const t = translations[lang];
+
+  const loadingSteps = t.loadingSteps;
 
   useEffect(() => {
     let interval: any;
@@ -147,7 +261,8 @@ export default function App() {
           councilName,
           locationName,
           userName,
-          todayDate
+          todayDate,
+          language: lang
         })
       });
 
@@ -222,15 +337,30 @@ export default function App() {
           </span>
         </div>
         <nav className="flex items-center gap-6 text-sm font-semibold">
+          <div className="flex bg-slate-100 p-1 rounded-xl items-center gap-1">
+            <button 
+              onClick={() => setLang('ms')}
+              className={`px-3 py-1.5 rounded-lg text-[10px] transition-all font-bold ${lang === 'ms' ? 'bg-white shadow-sm text-brand-600' : 'text-slate-400 hover:text-slate-600'}`}
+            >
+              BM
+            </button>
+            <button 
+              onClick={() => setLang('en')}
+              className={`px-3 py-1.5 rounded-lg text-[10px] transition-all font-bold ${lang === 'en' ? 'bg-white shadow-sm text-brand-600' : 'text-slate-400 hover:text-slate-600'}`}
+            >
+              EN
+            </button>
+          </div>
+          <div className="h-6 w-px bg-slate-200"></div>
           <button 
             onClick={() => setShowTatacara(true)}
             className="flex items-center gap-2 text-slate-500 hover:text-brand-600 transition-all hover:bg-brand-50 px-3 py-1.5 rounded-lg"
           >
             <HelpCircle size={18} />
-            Panduan
+            {t.guide}
           </button>
           <div className="h-6 w-px bg-slate-200"></div>
-          <span className="bg-slate-100 text-slate-600 px-3 py-1 rounded-full text-[10px] font-black tracking-widest uppercase ring-1 ring-slate-200">BETA 2030</span>
+          <span className="bg-slate-100 text-slate-600 px-3 py-1 rounded-full text-[10px] font-black tracking-widest uppercase ring-1 ring-slate-200">{t.beta}</span>
         </nav>
       </header>
 
@@ -239,9 +369,9 @@ export default function App() {
         {/* Left column: Input */}
         <div className="w-full md:w-5/12 bg-white border-r border-slate-100 overflow-y-auto p-8 lg:p-10 custom-scrollbar shadow-[10px_0_15px_-15px_rgba(0,0,0,0.05)]">
           <div className="mb-10">
-            <h1 className="text-2xl font-bold text-slate-900 mb-3 tracking-tight">Suara Rakyat, Tindakan PBT</h1>
+            <h1 className="text-2xl font-bold text-slate-900 mb-3 tracking-tight">{t.headline}</h1>
             <p className="text-sm text-slate-500 leading-relaxed font-medium">
-              Transformasikan aduan anda kepada laporan teknikal profesional. AI membantu anda menapis data dan menghubungi pihak berkuasa dalam sesaat.
+              {t.subheadline}
             </p>
           </div>
 
@@ -250,11 +380,11 @@ export default function App() {
               <div className="space-y-2.5">
                 <label className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.15em] flex items-center gap-2">
                   <Building2 size={12} className="text-brand-600" />
-                  Nama PBT Kawasan
+                  {t.councilLabel}
                 </label>
                 <input 
                   type="text"
-                  placeholder="Cth: MBIP, MBSA, DBKL"
+                  placeholder={t.councilPlaceholder}
                   value={councilName}
                   onChange={(e) => setCouncilName(e.target.value)}
                   className="w-full h-11 px-4 rounded-xl border-2 border-slate-50 bg-slate-50 focus:bg-white focus:ring-4 focus:ring-brand-50 focus:border-brand-500 outline-none transition-all text-xs font-bold placeholder:text-slate-300 shadow-sm"
@@ -263,11 +393,11 @@ export default function App() {
               <div className="space-y-2.5">
                 <label className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.15em] flex items-center gap-2">
                   <MapPin size={12} className="text-brand-600" />
-                  Lokasi Terperinci
+                  {t.locationLabel}
                 </label>
                 <input 
                   type="text"
-                  placeholder="Cth: Taman Universiti, Skudai"
+                  placeholder={t.locationPlaceholder}
                   value={locationName}
                   onChange={(e) => setLocationName(e.target.value)}
                   className="w-full h-11 px-4 rounded-xl border-2 border-slate-50 bg-slate-50 focus:bg-white focus:ring-4 focus:ring-brand-50 focus:border-brand-500 outline-none transition-all text-xs font-bold placeholder:text-slate-300 shadow-sm"
@@ -278,11 +408,11 @@ export default function App() {
             <div className="space-y-2.5">
               <label className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.15em] flex items-center gap-2">
                 <FileText size={12} className="text-brand-600" />
-                Nama Pengadu (Tandatangan)
+                {t.nameLabel}
               </label>
               <input 
                 type="text"
-                placeholder="Masukkan nama penuh anda"
+                placeholder={t.namePlaceholder}
                 value={userName}
                 onChange={(e) => setUserName(e.target.value)}
                 className="w-full h-11 px-4 rounded-xl border-2 border-slate-50 bg-slate-50 focus:bg-white focus:ring-4 focus:ring-brand-50 focus:border-brand-500 outline-none transition-all text-xs font-bold placeholder:text-slate-300 shadow-sm"
@@ -293,7 +423,7 @@ export default function App() {
             <div className="space-y-3">
               <label className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.15em] flex items-center gap-2">
                 <Upload size={12} className="text-brand-600" />
-                Bukti Gambar Kerosakan
+                {t.uploadLabel}
               </label>
               {!image ? (
                 <div 
@@ -306,8 +436,8 @@ export default function App() {
                   <div className="w-12 h-12 bg-white shadow-md rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 group-hover:bg-brand-600 group-hover:text-white transition-all text-brand-600">
                     <Upload size={20} />
                   </div>
-                  <p className="text-xs font-bold text-slate-700">Muat naik di sini</p>
-                  <p className="text-[9px] text-slate-400 mt-1 font-bold uppercase tracking-widest">Saiz Maksimum 10MB</p>
+                  <p className="text-xs font-bold text-slate-700">{t.uploadButton}</p>
+                  <p className="text-[9px] text-slate-400 mt-1 font-bold uppercase tracking-widest">{t.uploadSize}</p>
                 </div>
               ) : (
                 <div className="relative group rounded-2xl border-2 border-slate-100 overflow-hidden aspect-video bg-slate-50 flex items-center justify-center shadow-lg">
@@ -317,7 +447,7 @@ export default function App() {
                       onClick={() => {setImage(null); setResult(null);}}
                       className="w-full py-2 bg-white/90 backdrop-blur text-red-600 rounded-lg shadow-xl hover:bg-white transition-all flex items-center justify-center gap-2 font-bold text-[10px] uppercase tracking-wider"
                     >
-                      <Trash2 size={14} /> Ganti Gambar
+                      <Trash2 size={14} /> {t.replaceImage}
                     </button>
                   </div>
                 </div>
@@ -331,7 +461,7 @@ export default function App() {
                 className="w-full bg-slate-900 hover:bg-brand-600 text-white font-bold py-4 rounded-2xl flex items-center justify-center gap-3 transition-all active:scale-[0.98] disabled:opacity-20 disabled:grayscale shadow-xl shadow-slate-100 h-14 text-xs uppercase tracking-[0.2em]"
               >
                 {isGenerating ? <Loader2 className="animate-spin" size={18} /> : <Send size={18} />}
-                {isGenerating ? "Menjalankan Analisis AI..." : "Jana Analisis Pintar"}
+                {isGenerating ? t.generatingBtn : t.generateBtn}
               </button>
 
               <AnimatePresence>
@@ -361,9 +491,9 @@ export default function App() {
                 <Info size={16} />
               </div>
               <div className="space-y-1">
-                <p className="text-[10px] font-bold text-slate-800 uppercase tracking-wider">Teknologi Google Gemini</p>
+                <p className="text-[10px] font-bold text-slate-800 uppercase tracking-wider">{t.techInfoTitle}</p>
                 <p className="text-[10px] text-slate-500 font-medium leading-relaxed italic">
-                  Sistem menggunakan Vision AI untuk mengaudit kerosakan fizikal dan menjana laporan teknikal mengikut piawaian PBT.
+                  {t.techInfoDesc}
                 </p>
               </div>
             </div>
@@ -380,7 +510,7 @@ export default function App() {
                   initial={{ opacity: 0 }} animate={{ opacity: 1 }}
                 >
                   <Layers size={48} strokeWidth={1} className="mb-4 opacity-20" />
-                  <p className="text-[10px] font-bold uppercase tracking-[0.5em] text-slate-300">Hub Keputusan Strategik</p>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.5em] text-slate-300">{t.hubTitle}</p>
                 </motion.div>
               ) : (
                 <motion.div 
@@ -398,7 +528,7 @@ export default function App() {
                     >
                       <div className="flex justify-between items-start">
                         <span className={`text-[10px] font-bold uppercase tracking-widest ${result.severityScore === 0 ? 'text-emerald-600' : 'text-slate-400'}`}>
-                          {result.severityScore === 0 ? 'Penarafan Kualiti' : 'Skor Kerosakan'}
+                          {result.severityScore === 0 ? t.qualityLabel : t.severityLabel}
                         </span>
                         <div className={`w-8 h-8 rounded-full flex items-center justify-center ${result.severityScore === 0 ? 'bg-emerald-100 text-emerald-600' : 'bg-red-50 text-red-600'}`}>
                           {result.severityScore === 0 ? <ShieldCheck size={16} /> : <AlertCircle size={16} />}
@@ -428,7 +558,7 @@ export default function App() {
                     >
                       <div className="flex justify-between items-start mb-4">
                         <span className={`text-[10px] font-bold uppercase tracking-widest ${result.severityScore === 0 ? 'text-emerald-600' : 'text-slate-400'}`}>
-                          {result.severityScore === 0 ? 'Status Persekitaran' : 'Analisis Impak & Risiko'}
+                          {result.severityScore === 0 ? t.statusLabel : t.impactLabel}
                         </span>
                         <div className={`w-8 h-8 rounded-full flex items-center justify-center ${result.severityScore === 0 ? 'bg-emerald-100 text-emerald-600' : 'bg-orange-50 text-orange-600'}`}>
                           <Layers size={16} />
@@ -450,7 +580,7 @@ export default function App() {
                         <div className="w-8 h-8 rounded-xl bg-brand-500 text-white flex items-center justify-center">
                           <ClipboardEdit size={16} />
                         </div>
-                        <h3 className="text-xs font-bold text-white uppercase tracking-[0.2em]">Audit Teknikal Visual</h3>
+                        <h3 className="text-xs font-bold text-white uppercase tracking-[0.2em]">{t.auditTitle}</h3>
                       </div>
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         {result.technicalNotes.map((note, idx) => (
@@ -468,7 +598,7 @@ export default function App() {
                     <div className="space-y-4">
                       <div className="space-y-1.5 focus-within:border-brand-300 transition-all p-3 bg-slate-50 rounded-2xl border border-transparent">
                         <label className="text-[9px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
-                          <Mail size={12} className="text-slate-400" /> Emel PBT
+                          <Mail size={12} className="text-slate-400" /> {t.emailLabel}
                         </label>
                         <input 
                           value={recipientEmail} 
@@ -480,7 +610,7 @@ export default function App() {
                     <div className="space-y-4">
                       <div className="space-y-1.5 focus-within:border-brand-300 transition-all p-3 bg-slate-50 rounded-2xl border border-transparent">
                         <label className="text-[9px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
-                          <MessageCircle size={12} className="text-slate-400" /> WhatsApp
+                          <MessageCircle size={12} className="text-slate-400" /> {t.whatsappLabel}
                         </label>
                         <input 
                           value={recipientPhone} 
@@ -494,13 +624,13 @@ export default function App() {
                   {/* Letter Section */}
                   <section className="space-y-6">
                     <div className="flex items-center justify-between">
-                      <h3 className="text-xs font-bold text-slate-400 uppercase tracking-[0.3em]">Dokumen Rasmi</h3>
+                      <h3 className="text-xs font-bold text-slate-400 uppercase tracking-[0.3em]">{t.officialDoc}</h3>
                       <div className="flex gap-2">
                         <button onClick={copyText} className="h-10 px-4 text-[10px] font-bold bg-white border border-slate-200 rounded-xl hover:bg-slate-50 flex items-center gap-2 transition-all">
-                          {copied ? <Check size={14} className="text-brand-600" /> : <Copy size={14} />} {copied ? "Salin!" : "Salin Laporan"}
+                          {copied ? <Check size={14} className="text-brand-600" /> : <Copy size={14} />} {copied ? t.copiedBtn : t.copyBtn}
                         </button>
                         <button onClick={downloadPDF} className="h-10 px-4 text-[10px] font-bold bg-slate-900 text-white rounded-xl hover:bg-black flex items-center gap-2 transition-all">
-                          <Download size={14} /> PDF
+                          <Download size={14} /> {t.pdfBtn}
                         </button>
                       </div>
                     </div>
@@ -531,7 +661,7 @@ export default function App() {
                     <Layers size={24} />
                   </div>
                   <div className="space-y-0.5">
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Sedia Untuk Menghantar</p>
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{t.actionBarReady}</p>
                     <div className="flex items-center gap-2">
                        <h4 className="text-sm font-bold text-slate-900">{councilName}</h4>
                        <ChevronRight size={14} className="text-slate-300" />
@@ -542,10 +672,10 @@ export default function App() {
                 
                 <div className="flex w-full md:w-auto gap-4">
                   <button onClick={sendEmail} className="flex-1 md:flex-none h-14 px-8 bg-slate-900 hover:bg-black text-white font-bold rounded-2xl flex items-center justify-center gap-3 transition-all active:scale-95 shadow-xl shadow-slate-200 text-sm whitespace-nowrap">
-                    <Mail size={18} /> Hantar via Emel
+                    <Mail size={18} /> {t.sendEmailBtn}
                   </button>
                   <button onClick={sendWhatsApp} className="flex-1 md:flex-none h-14 px-8 bg-[#25D366] hover:bg-[#22c35e] text-white font-bold rounded-2xl flex items-center justify-center gap-3 transition-all shadow-xl shadow-green-100 active:scale-95 text-sm whitespace-nowrap">
-                    <MessageCircle size={18} /> WhatsApp
+                    <MessageCircle size={18} /> {t.sendWsBtn}
                   </button>
                 </div>
               </motion.div>
@@ -577,17 +707,17 @@ export default function App() {
                   <Info size={24} />
                 </div>
                 <div>
-                  <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Tatacara Penggunaan</h2>
-                  <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest">Portal Kerjasama Komuniti</p>
+                  <h2 className="text-2xl font-bold text-slate-900 tracking-tight">{t.howToTitle}</h2>
+                  <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest">{t.howToSub}</p>
                 </div>
               </div>
 
               <div className="space-y-6">
                 {[
-                  { n: "1", t: "Muat Naik Visual", d: "Ambil gambar kerosakan secara jelas sebagai bahan bukti utama." },
-                  { n: "2", t: "Analisis Kecerdasan", d: "Sistem AI akan mengaudit kerosakan dan mengenalpasti jabatan PBT yang tepat." },
-                  { n: "3", t: "Semakan & Edit", d: "Semak draf surat rasmi yang dijana dan lakukan pindaan jika perlu." },
-                  { n: "4", t: "Tindakan Pantas", d: "Hantar laporan melalui emel atau WhatsApp secara terus kepada agensi." }
+                  { n: "1", t: t.step1T, d: t.step1D },
+                  { n: "2", t: t.step2T, d: t.step2D },
+                  { n: "3", t: t.step3T, d: t.step3D },
+                  { n: "4", t: t.step4T, d: t.step4D }
                 ].map((step, idx) => (
                   <motion.div 
                     key={step.n} 
@@ -609,7 +739,7 @@ export default function App() {
                 onClick={() => setShowTatacara(false)}
                 className="w-full mt-10 bg-slate-900 text-white font-bold py-4 rounded-2xl hover:bg-black transition-all shadow-xl shadow-slate-200 text-sm tracking-widest"
               >
-                FAHAM & MULAKAN
+                {t.understandBtn}
               </button>
             </motion.div>
           </motion.div>
