@@ -1,20 +1,49 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# AduanPBT.ai 🏛️
 
-# Run and deploy your AI Studio app
+**Suara Rakyat, Tindakan PBT.**
 
-This contains everything you need to run your app locally.
+AduanPBT.ai adalah platform inovatif yang menggunakan kecerdasan buatan (AI) untuk membantu rakyat Malaysia membuat aduan atau memberi penghargaan kepada Pihak Berkuasa Tempatan (PBT) dengan lebih profesional dan efektif.
 
-View your app in AI Studio: https://ai.studio/apps/c94b9bed-97f8-43fe-a041-48e35c96898f
+## ✨ Ciri-ciri Utama
 
-## Run Locally
+- **Audit Visual Pintar**: Muat naik gambar kerosakan, dan AI akan menganalisis tahap kerosakan secara automatik.
+- **Penjanaan Dokumen Rasmi**: Menghasilkan surat kiriman rasmi atau emel penghargaan yang mengikut format standard PBT.
+- **Carian Pintar PBT**: Secara automatik mencari maklumat perhubungan (Emel, WhatsApp, Talian Hotline) agensi yang berkaitan.
+- **Dwi-Mod Respons**: Berkeupayaan melaporkan kerosakan (Aduan) atau memuji penyelenggaraan yang baik (Penghargaan).
+- **Eksport PDF**: Muat turun laporan sebagai fail PDF untuk tujuan arkib atau lampiran dokumen.
 
-**Prerequisites:**  Node.js
+## 🛠️ Teknologi
 
+- **Frontend**: React 19, Vite, Tailwind CSS
+- **Backend**: Node.js, Express
+- **Animasi**: Framer Motion
+- **Analisis AI**: Audit Visual & Pemprosesan Bahasa Alami (NLP)
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+## 🚀 Pemasangan & Pembangunan
+
+### Prasyarat
+- Node.js (v20 ke atas direkomendasikan)
+- NPM atau Yarn
+
+### Langkah Pemasangan
+1. Klon repositori ini.
+2. Pasang dependensi:
+   ```bash
+   npm install
+   ```
+3. Mulakan pelayan pembangunan:
+   ```bash
+   npm run dev
+   ```
+
+## 🐳 Deployment (Docker)
+
+Laman web ini sedia untuk dideploy ke Google Cloud Run menggunakan Docker:
+
+```bash
+docker build -t aduanpbt-ai .
+docker run -p 3000:3000 aduanpbt-ai
+```
+
+---
+*Dibuat untuk memperkasakan komuniti melalui teknologi.*
