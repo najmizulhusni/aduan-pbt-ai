@@ -58,6 +58,7 @@ export default function App() {
   const [copied, setCopied] = useState(false);
   const [showTatacara, setShowTatacara] = useState(false);
   const [lang, setLang] = useState<'ms' | 'en'>('ms');
+  const [showApp, setShowApp] = useState(false);
   
   const [recipientEmail, setRecipientEmail] = useState("");
   const [recipientPhone, setRecipientPhone] = useState("");
@@ -111,6 +112,21 @@ export default function App() {
       step4T: "Tindakan Pantas",
       step4D: "Hantar laporan melalui emel atau WhatsApp secara terus kepada agensi.",
       understandBtn: "FAHAM & MULAKAN",
+      heroTitle: "Revolusi Audit Infrastruktur Awam",
+      heroSub: "Platform AI pertama di Malaysia yang membolehkan rakyat memulakan tindakan sivik dalam masa saat. Snap, Analisis, dan Lapor.",
+      heroCta: "Mula Lapor Sekarang",
+      watchDemo: "Lihat Tatacara",
+      problemTitle: "Pemerkasaan Komuniti & PBT",
+      problemText: "AduanPBT.ai direka untuk menyokong aspirasi Malaysia Madani dengan merapatkan jurang antara suara rakyat dan kecekapan operasi PBT. Kami membantu komuniti membuat laporan yang berkualiti tinggi dan membantu PBT memproses data dengan lebih pantas.",
+      statsUserLabel: "Potensi Impak (DOSM)",
+      statsReportLabel: "Kepantasan Laporan",
+      statsCouncilLabel: "PBT Seluruh Malaysia",
+      statsAccuracyLabel: "Kos Laporan",
+      statsUserVal: "34.1J",
+      statsReportVal: "< 1 Min",
+      statsCouncilVal: "155",
+      statsAccuracyVal: "RM 0",
+      footerRights: "Hak Cipta Terpelihara.",
       errorImage: "Sila muat naik gambar kerosakan.",
       errorCouncil: "Sila nyatakan nama PBT (cth: MBIP, MBSA).",
       errorGen: "Gagal menjana analisis.",
@@ -168,6 +184,21 @@ export default function App() {
       step4T: "Rapid Action",
       step4D: "Send the report via email or WhatsApp directly to the agency.",
       understandBtn: "UNDERSTAND & START",
+      heroTitle: "Revolutionizing Public Audit",
+      heroSub: "Malaysia's first AI platform empowering citizens to trigger civic action in seconds. Snap, Analyze, and Report.",
+      heroCta: "Start Reporting",
+      watchDemo: "How it Works",
+      problemTitle: "Empowering Community & PBT",
+      problemText: "AduanPBT.ai is designed to support the Malaysia Madani aspiration by bridging the gap between citizen voices and PBT operational efficiency. We help communities create high-quality reports and assist councils in processing data faster.",
+      statsUserLabel: "Impact Potential (DOSM)",
+      statsReportLabel: "Report Speed",
+      statsCouncilLabel: "Malaysia-wide PBT",
+      statsAccuracyLabel: "Report Cost",
+      statsUserVal: "34.1M",
+      statsReportVal: "< 1 Min",
+      statsCouncilVal: "155",
+      statsAccuracyVal: "RM 0",
+      footerRights: "All Rights Reserved.",
       errorImage: "Please upload a damage image.",
       errorCouncil: "Please specify council name (e.g., MBIP, MBSA).",
       errorGen: "Failed to generate analysis.",
@@ -317,9 +348,9 @@ export default function App() {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-[#f8fafc] font-sans text-slate-900 overflow-hidden" id="sleek-dashboard">
+    <div className="flex flex-col min-h-screen bg-[#f8fafc] font-sans text-slate-900" id="sleek-dashboard">
       {/* Header */}
-      <header className="bg-white border-b border-slate-200 px-8 py-3.5 flex items-center justify-between shadow-sm z-50 shrink-0 relative">
+      <header className="bg-white/80 backdrop-blur-md border-b border-slate-200 px-6 md:px-12 py-4 flex items-center justify-between shadow-sm z-50 sticky top-0 shrink-0">
         {isGenerating && (
           <motion.div 
             className="absolute bottom-0 left-0 h-1 bg-brand-600 z-[60]"
@@ -329,14 +360,17 @@ export default function App() {
           />
         )}
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-brand-600 rounded-xl flex items-center justify-center shadow-lg shadow-brand-200 cursor-pointer hover:rotate-12 transition-transform">
+          <div 
+            onClick={() => setShowApp(false)}
+            className="w-10 h-10 bg-brand-600 rounded-xl flex items-center justify-center shadow-lg shadow-brand-200 cursor-pointer hover:rotate-12 transition-transform"
+          >
             <ShieldCheck className="w-6 h-6 text-white" />
           </div>
           <span className="text-2xl font-bold tracking-tight text-slate-900">
             AduanPBT<span className="text-brand-600">.ai</span>
           </span>
         </div>
-        <nav className="flex items-center gap-6 text-sm font-semibold">
+        <nav className="hidden md:flex items-center gap-6 text-sm font-semibold">
           <div className="flex bg-slate-100 p-1 rounded-xl items-center gap-1">
             <button 
               onClick={() => setLang('ms')}
@@ -362,11 +396,214 @@ export default function App() {
           <div className="h-6 w-px bg-slate-200"></div>
           <span className="bg-slate-100 text-slate-600 px-3 py-1 rounded-full text-[10px] font-black tracking-widest uppercase ring-1 ring-slate-200">{t.beta}</span>
         </nav>
+
+        {/* Mobile Language Toggle */}
+        <div className="flex md:hidden items-center gap-2">
+          <button onClick={() => setLang(lang === 'ms' ? 'en' : 'ms')} className="text-[10px] font-black bg-slate-100 px-3 py-1.5 rounded-lg uppercase">
+            {lang === 'ms' ? 'EN' : 'BM'}
+          </button>
+        </div>
       </header>
 
-      {/* Main Workspace */}
-      <main className="flex-1 flex overflow-hidden">
-        {/* Left column: Input */}
+      {!showApp ? (
+        <AnimatePresence mode="wait">
+          <motion.div 
+            initial={{ opacity: 0 }} 
+            animate={{ opacity: 1 }} 
+            exit={{ opacity: 0 }}
+            className="flex-1"
+          >
+            {/* Hero Section */}
+            <section className="relative overflow-hidden pt-20 pb-32 px-6 md:px-12 bg-white">
+              <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-[600px] h-[600px] bg-brand-50 rounded-full blur-[120px] opacity-60 z-0"></div>
+              <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/4 w-[400px] h-[400px] bg-emerald-50 rounded-full blur-[100px] opacity-40 z-0"></div>
+              
+              <div className="max-w-7xl mx-auto relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                <motion.div
+                  initial={{ opacity: 0, x: -30 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.8 }}
+                >
+                  <div className="inline-flex items-center gap-2 px-4 py-2 bg-brand-50 text-brand-700 rounded-full text-xs font-bold mb-8 ring-1 ring-brand-100">
+                    <span className="relative flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-brand-500"></span>
+                    </span>
+                    Vision 2030 Civic-Tech
+                  </div>
+                  <h1 className="text-6xl md:text-7xl font-black text-slate-900 tracking-tight leading-[1.05] mb-8">
+                    {t.heroTitle.split(' ').map((word, i) => (
+                      <span key={i} className={i === 2 ? 'text-brand-600 block' : ''}>{word} </span>
+                    ))}
+                  </h1>
+                  <p className="text-lg md:text-xl text-slate-500 font-medium mb-10 leading-relaxed max-w-xl">
+                    {t.heroSub}
+                  </p>
+                  <div className="flex flex-wrap gap-4">
+                    <button 
+                      onClick={() => setShowApp(true)}
+                      className="h-16 px-10 bg-slate-900 text-white font-bold rounded-2xl flex items-center justify-center gap-3 hover:bg-brand-600 transition-all active:scale-95 shadow-2xl shadow-brand-200 text-sm group"
+                    >
+                      {t.heroCta}
+                      <ChevronRight className="group-hover:translate-x-1 transition-transform" />
+                    </button>
+                    <button 
+                      onClick={() => setShowTatacara(true)}
+                      className="h-16 px-10 bg-white border-2 border-slate-100 text-slate-700 font-bold rounded-2xl flex items-center justify-center gap-3 hover:border-brand-200 transition-all active:scale-95 text-sm"
+                    >
+                      <HelpCircle />
+                      {t.watchDemo}
+                    </button>
+                  </div>
+                </motion.div>
+                
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9, rotate: 2 }}
+                  animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                  transition={{ duration: 1, ease: "easeOut" }}
+                  className="relative"
+                >
+                  <div className="absolute -inset-4 bg-gradient-to-tr from-brand-600 to-emerald-500 rounded-[40px] opacity-10 blur-2xl"></div>
+                  <div className="relative bg-slate-50 p-6 rounded-[40px] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] border border-slate-200 overflow-hidden min-h-[440px] flex flex-col">
+                    {/* Header Bar */}
+                    <div className="flex items-center justify-between mb-8 bg-white p-4 rounded-2xl border border-slate-100 italic shadow-sm">
+                      <div className="flex gap-1.5">
+                        <div className="w-2.5 h-2.5 rounded-full bg-red-400"></div>
+                        <div className="w-2.5 h-2.5 rounded-full bg-yellow-400"></div>
+                        <div className="w-2.5 h-2.5 rounded-full bg-green-400"></div>
+                      </div>
+                      <div className="text-[10px] font-bold text-slate-400">admin.aduanpbt.ai</div>
+                    </div>
+
+                    <div className="flex-1 grid grid-cols-12 gap-4">
+                      {/* Dashboard Sidebar Mock */}
+                      <div className="col-span-3 space-y-3">
+                         {[1,2,3,4].map(i => <div key={i} className="h-2 w-full bg-slate-200 rounded-full"></div>)}
+                      </div>
+
+                      {/* Main UI Area */}
+                      <div className="col-span-9 space-y-4">
+                        <motion.div 
+                          initial={{ y: 20, opacity: 0 }}
+                          animate={{ y: 0, opacity: 1 }}
+                          className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm"
+                        >
+                          <div className="flex items-center gap-4 mb-4">
+                            <div className="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center text-brand-600">
+                              <Building2 size={20} />
+                            </div>
+                            <div className="space-y-1">
+                              <div className="h-2 w-24 bg-slate-200 rounded-full"></div>
+                              <div className="h-1.5 w-16 bg-slate-100 rounded-full"></div>
+                            </div>
+                          </div>
+                          <div className="space-y-2">
+                             <div className="h-2 w-full bg-slate-50 rounded-full"></div>
+                             <div className="h-2 w-3/4 bg-slate-50 rounded-full"></div>
+                          </div>
+                        </motion.div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                          <motion.div 
+                            initial={{ x: -20, opacity: 0 }}
+                            animate={{ x: 0, opacity: 1 }}
+                            transition={{ delay: 0.2 }}
+                            className="bg-emerald-500 p-6 rounded-3xl text-white shadow-lg shadow-emerald-200"
+                          >
+                             <ShieldCheck size={28} className="mb-2" />
+                             <p className="text-[10px] font-bold opacity-80 decoration-slate-400">VERIFIED_AUDIT</p>
+                             <p className="text-xl font-black">98%</p>
+                          </motion.div>
+                          <motion.div 
+                            initial={{ x: 20, opacity: 0 }}
+                            animate={{ x: 0, opacity: 1 }}
+                            transition={{ delay: 0.4 }}
+                            className="bg-white p-6 rounded-3xl border border-brand-100 shadow-sm"
+                          >
+                             <div className="w-8 h-8 rounded-full bg-brand-50 flex items-center justify-center text-brand-600 mb-2">
+                               <MapPin size={16} />
+                             </div>
+                             <p className="text-[10px] font-bold text-slate-400">MALAYSIA_PBT</p>
+                             <p className="text-xl font-black text-slate-900 leading-none">155</p>
+                          </motion.div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Floating Alert Card */}
+                    <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-[85%] bg-slate-900 p-5 rounded-2xl shadow-2xl border border-slate-800 z-30">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-brand-500/20 flex items-center justify-center text-brand-400">
+                          <AlertCircle size={20} />
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-[9px] font-black uppercase tracking-widest text-brand-400 mb-0.5">Community Sync</p>
+                          <p className="text-xs font-bold text-white">Smart report sent to Majlis Perbandaran.</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              </div>
+            </section>
+
+            {/* Stats Section */}
+            <section className="bg-slate-50 py-20 px-6 md:px-12 border-y border-slate-100">
+              <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-12 text-center">
+                {[
+                  { label: t.statsUserLabel, val: t.statsUserVal },
+                  { label: t.statsReportLabel, val: t.statsReportVal },
+                  { label: t.statsCouncilLabel, val: t.statsCouncilVal },
+                  { label: t.statsAccuracyLabel, val: t.statsAccuracyVal }
+                ].map((stat, i) => (
+                  <div key={i} className="space-y-2">
+                    <p className="text-3xl font-black text-slate-900 tracking-tight">{stat.val}</p>
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest whitespace-nowrap">{stat.label}</p>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {/* Why Section */}
+            <section className="py-32 px-6 md:px-12 bg-white">
+              <div className="max-w-4xl mx-auto text-center space-y-8">
+                <h2 className="text-4xl font-bold text-slate-900 tracking-tight">{t.problemTitle}</h2>
+                <p className="text-lg text-slate-500 font-medium leading-relaxed">
+                  {t.problemText}
+                </p>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-12">
+                  <div className="p-10 bg-slate-50 rounded-[40px] space-y-4 hover:bg-brand-50 transition-colors">
+                    <div className="w-12 h-12 bg-white shadow-md rounded-2xl flex items-center justify-center text-brand-600 mx-auto"><ShieldCheck /></div>
+                    <h3 className="font-bold">Automated Audit</h3>
+                  </div>
+                  <div className="p-10 bg-slate-50 rounded-[40px] space-y-4 hover:bg-brand-50 transition-colors">
+                    <div className="w-12 h-12 bg-white shadow-md rounded-2xl flex items-center justify-center text-brand-600 mx-auto"><Building2 /></div>
+                    <h3 className="font-bold">Council Liaison</h3>
+                  </div>
+                  <div className="p-10 bg-slate-50 rounded-[40px] space-y-4 hover:bg-brand-50 transition-colors">
+                    <div className="w-12 h-12 bg-white shadow-md rounded-2xl flex items-center justify-center text-brand-600 mx-auto"><FileText /></div>
+                    <h3 className="font-bold">Legal Drafting</h3>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* Footer */}
+            <footer className="bg-slate-900 text-slate-400 py-20 px-6 md:px-12">
+              <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-center items-center gap-10">
+                <div className="flex items-center gap-3">
+                  <ShieldCheck className="w-8 h-8 text-brand-500" />
+                  <span className="text-2xl font-bold tracking-tight text-white">
+                    AduanPBT<span className="text-brand-500">.ai</span>
+                  </span>
+                </div>
+              </div>
+            </footer>
+          </motion.div>
+        </AnimatePresence>
+      ) : (
+        <main className="flex-1 flex overflow-hidden">
+          {/* Left column: Input */}
         <div className="w-full md:w-5/12 bg-white border-r border-slate-100 overflow-y-auto p-8 lg:p-10 custom-scrollbar shadow-[10px_0_15px_-15px_rgba(0,0,0,0.05)]">
           <div className="mb-10">
             <h1 className="text-2xl font-bold text-slate-900 mb-3 tracking-tight">{t.headline}</h1>
@@ -683,6 +920,7 @@ export default function App() {
           </AnimatePresence>
         </div>
       </main>
+    )}
 
       {/* Modal: Tatacara */}
       <AnimatePresence>
@@ -747,6 +985,11 @@ export default function App() {
       </AnimatePresence>
 
       <style>{`
+        @keyframes bounce-slow {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-10px); }
+        }
+        .animate-bounce-slow { animation: bounce-slow 4s infinite ease-in-out; }
         .custom-scrollbar::-webkit-scrollbar { width: 5px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
