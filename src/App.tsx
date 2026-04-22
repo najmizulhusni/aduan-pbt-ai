@@ -50,6 +50,7 @@ export default function App() {
   const [image, setImage] = useState<string | null>(null);
   const [councilName, setCouncilName] = useState("");
   const [locationName, setLocationName] = useState("");
+  const [userName, setUserName] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [loadingStep, setLoadingStep] = useState(0);
   const [result, setResult] = useState<AIResponse | null>(null);
@@ -149,33 +150,45 @@ export default function App() {
       const imageData = matches[2];
 
       const locationContext = locationName ? `Location: ${locationName}. ` : "";
+      const userContext = userName ? `Pengirim: ${userName}. ` : "";
 
       const response = await ai.models.generateContent({
         model: "gemini-3-flash-preview",
         contents: {
           parts: [
             { inlineData: { mimeType, data: imageData } },
-            { text: `Sistem Identiti: Audit Kejuruteraan Awam Pintar Malaysia.
-                     Konteks: Laporan kepada ${councilName}. ${locationContext} Tarikh: ${todayDate}.
+            { text: `Sistem Identiti: Audit & Analisis Infrastruktur Awam Malaysia Pintar.
+                     Konteks: Laporan untuk ${councilName}. ${locationContext} ${userContext} Tarikh: ${todayDate}.
                      
-                     Tugasan Analisis (Wajib dalam Bahasa Melayu):
-                     1. Audit Visual: Kenalpasti masalah infrastruktur secara spesifik. Anggarkan dimensi atau tahap kerosakan.
-                     2. Carian Hubungan: Cari emel rasmi aduan, no. WhatsApp aduan, dan laman web korporat untuk ${councilName}.
-                     3. Skor Bahaya (Severity Score): Kadar dari 1 (minimum) hingga 10 (kritikal/nyawa terancam).
-                     4. Analisis Impak: Terangkan risiko kepada penduduk setempat (cth: risiko kemalangan, gangguan aliran trafik). Gunakan nada profesional.
-                     5. Jana Surat Kiriman Rasmi: Format standard Malaysia yang lengkap. Pastikan bahasa sangat formal, tegas tetapi sopan (Bahasa Melayu Tinggi).
-                     6. Jana Nota Teknikal: Ekstrak 3 fakta teknikal dari imej (cth: jenis turapan, kedalaman anggaran, lokasi relatif).
+                     Tugasan Utama (Dwi-Mod: Aduan atau Penghargaan):
+                     1. Analisis Kualiti Visual: Teliti imej dengan mendalam. 
+                        - Jika ada kerosakan (jalan berlubang, lampu rosak, sampah), beri skor 1-10.
+                        - Jika persekitaran BERSIH, TERATUR, dan CANTIK, beri skor 0.
+                     
+                     2. Carian Hubungan Tepat: Gunakan Google Search untuk mencari:
+                        - Emel Rasmi Aduan ${councilName} (pastikan domain .gov.my yang betul).
+                        - No. WhatsApp Aduan / Talian Hotline khusus untuk aduan awam.
+                        - Laman web rasmi jabatan aduan.
+                     
+                     3. Penjanaan Dokumen Profesional:
+                        - JIKA SKOR > 0: Jana 'Surat Kiriman Rasmi' (Aduan) yang tegas.
+                        - JIKA SKOR == 0: Jana 'Surat Penghargaan/Pujian' (Commendation) kepada PBT kerana mengekalkan kebersihan atau kualiti infrastruktur. Puji hasil kerja Majlis dalam menjaga kawasan tersebut.
+                        - Gunakan nama "${userName || '[NAMA ANDA]'}" dalam tandatangan. JANGAN guna "Audit Manager".
+                     
+                     4. Nota Teknikal & Impak:
+                        - JIKA SKOR > 0: Fokus pada risiko keselamatan.
+                        - JIKA SKOR == 0: Fokus pada kualiti bahan atau estetika yang dikekalkan dengan baik.
                      
                      Return ONLY a valid JSON:
                      {
-                       "formalLetter": "string (Surat Kiriman Rasmi lengkap)",
-                       "emailTemplate": "string (Templat emel ringkas dan padat)",
+                       "formalLetter": "string (Surat Rasmi lengkap)",
+                       "emailTemplate": "string (Ringkasan emel)",
                        "contactInfo": { "email": "string", "whatsapp": "string", "website": "string", "phone": "string" },
-                       "problemTitle": "Tajuk Profesional (cth: Aduan Kerosakan Jalan Berlubang)",
-                       "department": "Jabatan Bertanggungjawab (cth: Jabatan Kerja Raya / Kejuruteraan)",
-                       "severityScore": number,
-                       "impactAnalysis": "Ringkasan analisis risiko yang profesional",
-                       "technicalNotes": ["nota teknikal 1", "nota teknikal 2", "nota teknikal 3"]
+                       "problemTitle": "Tajuk Profesional (Aduan atau Penghargaan)",
+                       "department": "Jabatan Bertanggungjawab",
+                       "severityScore": number (0-10),
+                       "impactAnalysis": "Analisis kualiti atau risiko",
+                       "technicalNotes": ["nota 1", "nota 2", "nota 3"]
                      }` }
           ]
         },
@@ -304,6 +317,21 @@ export default function App() {
               </div>
             </div>
 
+            <div className="space-y-2.5">
+              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.15em] flex items-center gap-2">
+                <FileText size={12} className="text-brand-600" />
+                Nama Pengadu (Tandatangan)
+              </label>
+              <input 
+                type="text"
+                placeholder="Masukkan nama penuh anda"
+                value={userName}
+                onChange={(e) => setUserName(e.target.value)}
+                className="w-full h-11 px-4 rounded-xl border-2 border-slate-50 bg-slate-50 focus:bg-white focus:ring-4 focus:ring-brand-50 focus:border-brand-500 outline-none transition-all text-xs font-bold placeholder:text-slate-300 shadow-sm"
+              />
+            </div>
+
+
             <div className="space-y-3">
               <label className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.15em] flex items-center gap-2">
                 <Upload size={12} className="text-brand-600" />
@@ -405,25 +433,29 @@ export default function App() {
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {/* Severity Card */}
                     <motion.div 
-                      className="bg-white p-6 rounded-[32px] border border-slate-200 shadow-sm flex flex-col justify-between h-52 hover:border-brand-200 transition-colors"
+                      className={`p-6 rounded-[32px] border shadow-sm flex flex-col justify-between h-52 transition-colors ${result.severityScore === 0 ? 'bg-emerald-50 border-emerald-100' : 'bg-white border-slate-200 hover:border-brand-200'}`}
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: 0.1 }}
                     >
                       <div className="flex justify-between items-start">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Skor Kerosakan</span>
-                        <div className="w-8 h-8 rounded-full bg-red-50 text-red-600 flex items-center justify-center">
-                          <AlertCircle size={16} />
+                        <span className={`text-[10px] font-bold uppercase tracking-widest ${result.severityScore === 0 ? 'text-emerald-600' : 'text-slate-400'}`}>
+                          {result.severityScore === 0 ? 'Penarafan Kualiti' : 'Skor Kerosakan'}
+                        </span>
+                        <div className={`w-8 h-8 rounded-full flex items-center justify-center ${result.severityScore === 0 ? 'bg-emerald-100 text-emerald-600' : 'bg-red-50 text-red-600'}`}>
+                          {result.severityScore === 0 ? <ShieldCheck size={16} /> : <AlertCircle size={16} />}
                         </div>
                       </div>
                       <div className="mt-4 flex items-end gap-2">
-                        <span className="text-6xl font-black text-slate-900 leading-none">{result.severityScore}</span>
-                        <span className="text-sm font-bold text-slate-400 mb-2">/ 10</span>
+                        <span className={`text-6xl font-black leading-none ${result.severityScore === 0 ? 'text-emerald-700' : 'text-slate-900'}`}>
+                          {result.severityScore}
+                        </span>
+                        <span className={`text-sm font-bold mb-2 ${result.severityScore === 0 ? 'text-emerald-400' : 'text-slate-400'}`}>/ 10</span>
                       </div>
                       <div className="w-full h-1.5 bg-slate-100 rounded-full mt-4 overflow-hidden">
                         <motion.div 
-                          className={`h-full ${result.severityScore > 7 ? 'bg-red-500' : result.severityScore > 4 ? 'bg-orange-500' : 'bg-brand-500'}`}
-                          initial={{ width: 0 }} animate={{ width: `${result.severityScore * 10}%` }}
+                          className={`h-full ${result.severityScore === 0 ? 'bg-emerald-500' : result.severityScore > 7 ? 'bg-red-500' : result.severityScore > 4 ? 'bg-orange-500' : 'bg-brand-500'}`}
+                          initial={{ width: 0 }} animate={{ width: `${result.severityScore === 0 ? 100 : result.severityScore * 10}%` }}
                           transition={{ duration: 1, delay: 0.5 }}
                         />
                       </div>
@@ -431,18 +463,20 @@ export default function App() {
 
                     {/* Impact Card */}
                     <motion.div 
-                      className="bg-white p-6 rounded-[32px] border border-slate-200 shadow-sm flex flex-col h-52 md:col-span-2 hover:border-brand-200 transition-colors"
+                      className={`p-6 rounded-[32px] border shadow-sm flex flex-col h-52 md:col-span-2 transition-colors ${result.severityScore === 0 ? 'bg-emerald-50 border-emerald-100' : 'bg-white border-slate-200 hover:border-brand-200'}`}
                       initial={{ opacity: 0, x: 20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: 0.2 }}
                     >
                       <div className="flex justify-between items-start mb-4">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Analisis Impak & Risiko</span>
-                        <div className="w-8 h-8 rounded-full bg-orange-50 text-orange-600 flex items-center justify-center">
-                          <ShieldCheck size={16} />
+                        <span className={`text-[10px] font-bold uppercase tracking-widest ${result.severityScore === 0 ? 'text-emerald-600' : 'text-slate-400'}`}>
+                          {result.severityScore === 0 ? 'Status Persekitaran' : 'Analisis Impak & Risiko'}
+                        </span>
+                        <div className={`w-8 h-8 rounded-full flex items-center justify-center ${result.severityScore === 0 ? 'bg-emerald-100 text-emerald-600' : 'bg-orange-50 text-orange-600'}`}>
+                          <Layers size={16} />
                         </div>
                       </div>
-                      <p className="text-sm font-medium text-slate-600 leading-relaxed italic">
+                      <p className={`text-sm font-medium leading-relaxed italic ${result.severityScore === 0 ? 'text-emerald-800' : 'text-slate-600'}`}>
                         "{result.impactAnalysis}"
                       </p>
                     </motion.div>
