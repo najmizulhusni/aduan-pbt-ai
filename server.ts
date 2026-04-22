@@ -10,7 +10,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware for parsing JSON with a larger limit for images
-app.use(express.json({ limit: "10mb" }));
+app.use(express.json({ limit: "20mb" }));
 
 // API Heartbeat
 app.get("/api/health", (req, res) => {
@@ -24,7 +24,8 @@ app.post("/api/generate", async (req, res) => {
     const apiKey = process.env.GEMINI_API_KEY;
 
     if (!apiKey) {
-      return res.status(500).json({ error: "GEMINI_API_KEY not configured on server" });
+      console.error("GEMINI_API_KEY is missing in environment");
+      return res.status(500).json({ error: "Sistem AI belum dikonfigurasi di pelayan (API Key Missing)." });
     }
 
     const ai = new GoogleGenAI({ apiKey });
@@ -37,7 +38,7 @@ app.post("/api/generate", async (req, res) => {
     const mimeType = matches[1];
     const imageData = matches[2];
 
-    const locationContext = locationName ? `Location: ${locationName}. ` : "";
+    const locationContext = locationName ? `Lokasi: ${locationName}. ` : "";
     const userContext = userName ? `Pengirim: ${userName}. ` : "";
 
     const response = await ai.models.generateContent({
@@ -45,38 +46,33 @@ app.post("/api/generate", async (req, res) => {
       contents: {
         parts: [
           { inlineData: { mimeType, data: imageData } },
-          { text: `Sistem Identiti: Audit & Analisis Infrastruktur Awam Malaysia Pintar.
+          { text: `Sistem Identiti: Audit & Analisis Infrastruktur Awam Malaysia Pintar (AduanPBT.ai).
                    Konteks: Laporan untuk ${councilName}. ${locationContext} ${userContext} Tarikh: ${todayDate}.
                    
-                   Tugasan Utama (Dwi-Mod: Aduan atau Penghargaan):
-                   1. Analisis Kualiti Visual: Teliti imej dengan mendalam. 
-                      - Jika ada kerosakan (jalan berlubang, lampu rosak, sampah), beri skor 1-10.
-                      - Jika persekitaran BERSIH, TERATUR, dan CANTIK, beri skor 0.
+                   Tugasan Utama:
+                   1. Analisis Kualiti Visual:
+                      - Kenalpasti objek dalam imej. Jika ada kerosakan (jalan berlubang, lampu pecah, sampah sarap, longkang tersumbat), beri skor 1-10 mengikut tahap bahaya.
+                      - JIKA PERSEKITARAN BERSIH & TERATUR: Beri skor 0. Ini bermakna PBT telah menjalankan kerja dengan baik.
                    
-                   2. Carian Hubungan Tepat: Gunakan Google Search untuk mencari:
-                      - Emel Rasmi Aduan ${councilName} (pastikan domain .gov.my yang betul).
-                      - No. WhatsApp Aduan / Talian Hotline khusus untuk aduan awam.
-                      - Laman web rasmi jabatan aduan.
+                   2. Carian Maklumat PBT (${councilName}):
+                      - Cari emel rasmi aduan (biasanya aduan@... atau ssm@...).
+                      - Cari no. khusus WhatsApp Aduan atau Hotline SISPAA yang betul.
                    
-                   3. Penjanaan Dokumen Profesional:
-                      - JIKA SKOR > 0: Jana 'Surat Kiriman Rasmi' (Aduan) yang tegas.
-                      - JIKA SKOR == 0: Jana 'Surat Penghargaan/Pujian' (Commendation) kepada PBT kerana mengekalkan kebersihan atau kualiti infrastruktur. Puji hasil kerja Majlis dalam menjaga kawasan tersebut.
-                      - Gunakan nama "${userName || '[NAMA ANDA]'}" dalam tandatangan. JANGAN guna "Audit Manager".
+                   3. Penjana Dokumen:
+                      - JIKA SKOR > 0: Jana 'Surat Aduan Rasmi' yang tegas, profesional, dan menuntut tindakan segera.
+                      - JIKA SKOR == 0: Jana 'Surat Penghargaan' yang memuji kebersihan/kualiti kawasan tersebut. Berterima kasih kepada Majlis atas dedikasi mereka.
+                      - Gunakan nama "${userName || 'Warga Prihatin'}" dalam tandatangan.
                    
-                   4. Nota Teknikal & Impak:
-                      - JIKA SKOR > 0: Fokus pada risiko keselamatan.
-                      - JIKA SKOR == 0: Fokus pada kualiti bahan atau estetika yang dikekalkan dengan baik.
-                   
-                   Return ONLY a valid JSON:
+                   MANDATORY JSON FORMAT:
                    {
-                     "formalLetter": "string (Surat Rasmi lengkap)",
-                     "emailTemplate": "string (Ringkasan emel)",
+                     "formalLetter": "Isi kandungan surat rasmi lengkap",
+                     "emailTemplate": "Ringkasan padat untuk tindakan/penghargaan",
                      "contactInfo": { "email": "string", "whatsapp": "string", "website": "string", "phone": "string" },
-                     "problemTitle": "Tajuk Profesional (Aduan atau Penghargaan)",
-                     "department": "Jabatan Bertanggungjawab",
-                     "severityScore": number (0-10),
-                     "impactAnalysis": "Analisis kualiti atau risiko",
-                     "technicalNotes": ["nota 1", "nota 2", "nota 3"]
+                     "problemTitle": "Tajuk Profesional (Aduan Kerosakan VS Penghargaan Kebersihan)",
+                     "department": "Jabatan Teknikal/Kebersihan/Landskap",
+                     "severityScore": number,
+                     "impactAnalysis": "Analisis risiko atau kualiti penyelenggaraan",
+                     "technicalNotes": ["nota teknikal 1", "nota 2"]
                    }` }
         ]
       },
@@ -89,7 +85,7 @@ app.post("/api/generate", async (req, res) => {
     res.json(JSON.parse(response.text || "{}"));
   } catch (error: any) {
     console.error("AI Error:", error);
-    res.status(500).json({ error: error.message || "Failed to generate AI response" });
+    res.status(500).json({ error: error.message || "Gagal memproses data AI." });
   }
 });
 
