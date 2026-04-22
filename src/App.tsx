@@ -22,7 +22,8 @@ import {
   Calendar,
   Layers,
   ChevronRight,
-  ClipboardEdit
+  ClipboardEdit,
+  CheckCircle2
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { jsPDF } from "jspdf";
@@ -126,6 +127,15 @@ export default function App() {
       statsReportVal: "< 1 Min",
       statsCouncilVal: "155",
       statsAccuracyVal: "RM 0",
+      feature1: "Audit Automatik",
+      feature2: "Hubungan PBT",
+      feature3: "Draf Surat Rasmi",
+      syncTitle: "Sinkronisasi Komuniti",
+      syncDesc: "Laporan pintar dihantar ke Majlis Perbandaran.",
+      verifiedAudit: "AUDIT TERVERIFIKASI",
+      malaysiaPbt: "PBT MALAYSIA",
+      communitySync: "SINKRONISASI KOMUNITI",
+      reportSent: "Laporan dihantar ke Majlis.",
       footerRights: "Hak Cipta Terpelihara.",
       errorImage: "Sila muat naik gambar kerosakan.",
       errorCouncil: "Sila nyatakan nama PBT (cth: MBIP, MBSA).",
@@ -198,6 +208,15 @@ export default function App() {
       statsReportVal: "< 1 Min",
       statsCouncilVal: "155",
       statsAccuracyVal: "RM 0",
+      feature1: "Automated Audit",
+      feature2: "Council Liaison",
+      feature3: "Legal Drafting",
+      syncTitle: "Community Sync",
+      syncDesc: "Smart report sent to Majlis Perbandaran.",
+      verifiedAudit: "VERIFIED AUDIT",
+      malaysiaPbt: "MALAYSIA PBT",
+      communitySync: "COMMUNITY SYNC",
+      reportSent: "Report sent to Council.",
       footerRights: "All Rights Reserved.",
       errorImage: "Please upload a damage image.",
       errorCouncil: "Please specify council name (e.g., MBIP, MBSA).",
@@ -511,7 +530,7 @@ export default function App() {
                             className="bg-emerald-500 p-6 rounded-3xl text-white shadow-lg shadow-emerald-200"
                           >
                              <ShieldCheck size={28} className="mb-2" />
-                             <p className="text-[10px] font-bold opacity-80 decoration-slate-400">VERIFIED_AUDIT</p>
+                             <p className="text-[10px] font-bold opacity-80 uppercase tracking-widest">{t.verifiedAudit}</p>
                              <p className="text-xl font-black">98%</p>
                           </motion.div>
                           <motion.div 
@@ -523,7 +542,7 @@ export default function App() {
                              <div className="w-8 h-8 rounded-full bg-brand-50 flex items-center justify-center text-brand-600 mb-2">
                                <MapPin size={16} />
                              </div>
-                             <p className="text-[10px] font-bold text-slate-400">MALAYSIA_PBT</p>
+                             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{t.malaysiaPbt}</p>
                              <p className="text-xl font-black text-slate-900 leading-none">155</p>
                           </motion.div>
                         </div>
@@ -531,14 +550,14 @@ export default function App() {
                     </div>
                     
                     {/* Floating Alert Card */}
-                    <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-[85%] bg-slate-900 p-5 rounded-2xl shadow-2xl border border-slate-800 z-30">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-brand-500/20 flex items-center justify-center text-brand-400">
-                          <AlertCircle size={20} />
+                    <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-[85%] bg-white p-5 rounded-3xl shadow-2xl border border-slate-100 z-30 ring-1 ring-slate-100">
+                      <div className="flex items-center gap-4">
+                        <div className="w-10 h-10 rounded-full bg-brand-600 flex items-center justify-center text-white shadow-lg shadow-brand-200">
+                          <CheckCircle2 size={20} />
                         </div>
                         <div className="flex-1">
-                          <p className="text-[9px] font-black uppercase tracking-widest text-brand-400 mb-0.5">Community Sync</p>
-                          <p className="text-xs font-bold text-white">Smart report sent to Majlis Perbandaran.</p>
+                          <p className="text-[10px] font-black uppercase tracking-widest text-brand-600 mb-0.5">{t.communitySync}</p>
+                          <p className="text-xs font-bold text-slate-800">{t.reportSent}</p>
                         </div>
                       </div>
                     </div>
@@ -574,15 +593,15 @@ export default function App() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-12">
                   <div className="p-10 bg-slate-50 rounded-[40px] space-y-4 hover:bg-brand-50 transition-colors">
                     <div className="w-12 h-12 bg-white shadow-md rounded-2xl flex items-center justify-center text-brand-600 mx-auto"><ShieldCheck /></div>
-                    <h3 className="font-bold">Automated Audit</h3>
+                    <h3 className="font-bold text-slate-900">{t.feature1}</h3>
                   </div>
                   <div className="p-10 bg-slate-50 rounded-[40px] space-y-4 hover:bg-brand-50 transition-colors">
                     <div className="w-12 h-12 bg-white shadow-md rounded-2xl flex items-center justify-center text-brand-600 mx-auto"><Building2 /></div>
-                    <h3 className="font-bold">Council Liaison</h3>
+                    <h3 className="font-bold text-slate-900">{t.feature2}</h3>
                   </div>
                   <div className="p-10 bg-slate-50 rounded-[40px] space-y-4 hover:bg-brand-50 transition-colors">
                     <div className="w-12 h-12 bg-white shadow-md rounded-2xl flex items-center justify-center text-brand-600 mx-auto"><FileText /></div>
-                    <h3 className="font-bold">Legal Drafting</h3>
+                    <h3 className="font-bold text-slate-900">{t.feature3}</h3>
                   </div>
                 </div>
               </div>
